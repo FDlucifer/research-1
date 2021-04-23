@@ -13,15 +13,12 @@ extern kern_return_t IOServiceOpen(io_service_t service, task_port_t owningTask,
 extern CFDictionaryRef IOServiceMatching(const char *name);
 extern const mach_port_t kIOMasterPortDefault;
 
-extern kern_return_t
-IOConnectCallScalarMethod(
-    mach_port_t  connection,        // In
-    uint32_t     selector,      // In
-    const uint64_t  *input,         // In
-    uint32_t     inputCnt,      // In
-    uint64_t    *output,        // Out
-                          uint32_t    *outputCnt);     // In/Out
-
+extern kern_return_t IOConnectCallScalarMethod(mach_port_t connection,  // In
+                                               uint32_t selector,       // In
+                                               const uint64_t *input,   // In
+                                               uint32_t inputCnt,       // In
+                                               uint64_t *output,        // Out
+                                               uint32_t *outputCnt);    // In/Out
 
 int main() {
 
@@ -45,8 +42,8 @@ int main() {
 
     ret = IOConnectCallScalarMethod(client, 11, NULL, 0, NULL, NULL);
     if (ret != KERN_SUCCESS) {
-           printf("[-] enable power:  0x%x %s\n", ret, mach_error_string(ret));
-           return 0;
+        printf("[-] enable power:  0x%x %s\n", ret, mach_error_string(ret));
+        return 0;
     }
 
     while (1) {
@@ -57,21 +54,20 @@ int main() {
             printf("[-] is_power: %s\n", mach_error_string(ret));
             return 0;
         }
-        
-        if (is_power)
-            break;
+
+        if (is_power) break;
     }
     printf("[+] powered on!\n");
 
-	uint64_t args[3] = { 0 };
-	args[0] = 0x4242424242424242;
-	args[1] = 0x4141414141414141;
-	args[2] = 0x00;
+    uint64_t args[3] = {0};
+    args[0] = 0x4242424242424242;
+    args[1] = 0x4141414141414141;
+    args[2] = 0x00;
 
-	ret = IOConnectCallScalarMethod(client, 0x56, args, 3, NULL, NULL);
-	if (ret != KERN_SUCCESS) {
-		printf("[-] 0x56: %s\n", mach_error_string(ret));
-		return 0;
-	}
+    ret = IOConnectCallScalarMethod(client, 0x56, args, 3, NULL, NULL);
+    if (ret != KERN_SUCCESS) {
+        printf("[-] 0x56: %s\n", mach_error_string(ret));
+        return 0;
+    }
     return 0;
 }
